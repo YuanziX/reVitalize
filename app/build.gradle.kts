@@ -88,6 +88,7 @@ dependencies {
     implementation(libs.navigation.compose)
     implementation(libs.serialization.json)
 
-    // http client
-    implementation(libs.fuel)
+    // network libs
+    implementation(libs.okhttp) // http client
+    implementation(libs.gson) // json to class
 }
