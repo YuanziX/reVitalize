@@ -4,7 +4,7 @@ import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
-import okio.IOException
+import java.io.IOException
 
 object NetworkUtils {
     private val client = OkHttpClient()
@@ -23,27 +23,28 @@ object NetworkUtils {
     }
 
     private fun postHelper(url: String, data: Map<String, Any>): Response {
-        val formBody = FormBody.Builder()
-        data.forEach { (key, value) ->
-            formBody.add(key, value.toString())
-        }
-        val request = Request.Builder().url(url)
-            .post(formBody.build())
-            .build()
+        val formBody = FormBody.Builder().apply {
+            data.forEach { (key, value) ->
+                add(key, value.toString())
+            }
+        }.build()
 
-        client.newCall(request).execute().use { response ->
-            if (!response.isSuccessful) throw IOException("Unexpected code $response")
-            return response
+        val request = Request.Builder().url(url).post(formBody).build()
+
+        return client.newCall(request).execute().apply {
+            if (!isSuccessful) throw IOException("Unexpected code $this")
         }
     }
 
     fun post(url: String, data: Map<String, Any>): String {
-        return postHelper(url, data).body!!.string()
+        postHelper(url, data).use { response ->
+            return response.body!!.string()
+        }
     }
 
     fun postStatusCode(url: String, data: Map<String, Any>): Int {
-        return postHelper(url, data).code
+        postHelper(url, data).use { response ->
+            return response.code
+        }
     }
-
 }
-

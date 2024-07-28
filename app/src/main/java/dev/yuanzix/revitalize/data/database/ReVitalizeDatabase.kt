@@ -5,13 +5,13 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import dev.yuanzix.revitalize.data.models.AttendanceItem
 import dev.yuanzix.revitalize.data.models.GradeHistory
-import dev.yuanzix.revitalize.data.models.Profile
-import dev.yuanzix.revitalize.data.models.SemesterDetails
-import dev.yuanzix.revitalize.data.models.TimeTable
+import dev.yuanzix.revitalize.data.models.ProfileItem
+import dev.yuanzix.revitalize.data.models.Semester
+import dev.yuanzix.revitalize.data.models.TimetableDay
 import dev.yuanzix.revitalize.data.models.util.Converter
 
 @Database(
-    entities = [AttendanceItem::class, GradeHistory::class, Profile::class, SemesterDetails::class, TimeTable::class],
+    entities = [AttendanceItem::class, GradeHistory::class, ProfileItem::class, Semester::class, TimetableDay::class],
     version = 1,
     exportSchema = false
 )

@@ -12,9 +12,9 @@ import dev.yuanzix.revitalize.data.constants.DatabaseConstants.SEMESTER_ID_TABLE
 import dev.yuanzix.revitalize.data.constants.DatabaseConstants.TIMETABLE_TABLE
 import dev.yuanzix.revitalize.data.models.AttendanceItem
 import dev.yuanzix.revitalize.data.models.GradeHistory
-import dev.yuanzix.revitalize.data.models.Profile
-import dev.yuanzix.revitalize.data.models.SemesterDetails
-import dev.yuanzix.revitalize.data.models.TimeTable
+import dev.yuanzix.revitalize.data.models.ProfileItem
+import dev.yuanzix.revitalize.data.models.Semester
+import dev.yuanzix.revitalize.data.models.TimetableDay
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -24,6 +24,9 @@ interface AttendanceDao {
 
     @Query("SELECT * FROM $ATTENDANCE_TABLE")
     fun getAll(): Flow<List<AttendanceItem>>
+
+    @Query("SELECT (SELECT COUNT(*) FROM $ATTENDANCE_TABLE) == 0")
+    suspend fun isEmpty(): Boolean
 }
 
 @Dao
@@ -32,16 +35,16 @@ interface TimeTableDao {
     suspend fun delete()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(timeTable: TimeTable)
+    suspend fun insertAll(timetableDay: TimetableDay)
 
-    @Transaction
-    suspend fun insertTimetable(timeTable: TimeTable) {
-        delete()
-        insert(timeTable)
-    }
+    @Query("SELECT * FROM $TIMETABLE_TABLE")
+    suspend fun getAll(): TimetableDay
 
-    @Query("SELECT * FROM $TIMETABLE_TABLE LIMIT 1")
-    fun get(): Flow<TimeTable>
+    @Query("SELECT * FROM $TIMETABLE_TABLE WHERE day = :day")
+    suspend fun getDay(day: String): TimetableDay
+
+    @Query("SELECT (SELECT COUNT(*) FROM $TIMETABLE_TABLE) == 0")
+    suspend fun isEmpty(): Boolean
 }
 
 @Dao
@@ -50,16 +53,13 @@ interface SemesterDetailsDao {
     suspend fun delete()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(semesterDetails: SemesterDetails)
+    suspend fun insert(semesters: List<Semester>)
 
-    @Transaction
-    suspend fun insertSemesterDetails(semesterDetails: SemesterDetails) {
-        delete()
-        insert(semesterDetails)
-    }
+    @Query("SELECT * FROM $SEMESTER_ID_TABLE")
+    fun get(): Flow<List<Semester>>
 
-    @Query("SELECT * FROM $SEMESTER_ID_TABLE LIMIT 1")
-    fun get(): Flow<SemesterDetails>
+    @Query("SELECT (SELECT COUNT(*) FROM $SEMESTER_ID_TABLE) == 0")
+    suspend fun isEmpty(): Boolean
 }
 
 @Dao
@@ -68,16 +68,13 @@ interface ProfileDao {
     suspend fun delete()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(profile: Profile)
+    suspend fun insert(profileItems: List<ProfileItem>)
 
-    @Transaction
-    suspend fun insertProfile(profile: Profile) {
-        delete()
-        insert(profile)
-    }
+    @Query("SELECT * FROM $PROFILE_TABLE")
+    fun get(): Flow<List<ProfileItem>>
 
-    @Query("SELECT * FROM $PROFILE_TABLE LIMIT 1")
-    fun get(): Flow<Profile>
+    @Query("SELECT (SELECT COUNT(*) FROM $PROFILE_TABLE) == 0")
+    suspend fun isEmpty(): Boolean
 }
 
 @Dao
@@ -96,4 +93,7 @@ interface GradeHistoryDao {
 
     @Query("SELECT * FROM $GRADE_HISTORY_TABLE LIMIT 1")
     fun get(): Flow<GradeHistory>
+
+    @Query("SELECT (SELECT COUNT(*) FROM $GRADE_HISTORY_TABLE) == 0")
+    suspend fun isEmpty(): Boolean
 }
