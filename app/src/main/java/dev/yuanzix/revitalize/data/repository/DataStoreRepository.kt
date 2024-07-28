@@ -19,6 +19,8 @@ import javax.inject.Inject
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = DATA_STORE_NAME)
 
+data class UserCredentials(val username: String, val password: String)
+
 class DataStoreRepository @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
@@ -36,15 +38,15 @@ class DataStoreRepository @Inject constructor(
         }
     }
 
-    val readUsernameAndPassword: Flow<String> = dataStore.data.catch {
-        if (it is IOException) {
+    val readUsernameAndPassword: Flow<UserCredentials> = dataStore.data.catch { exception ->
+        if (exception is IOException) {
             emit(emptyPreferences())
         } else {
-            throw it
+            throw exception
         }
-    }.map {
-        it[PreferenceKeys.username] ?: ""
-        it[PreferenceKeys.password] ?: ""
+    }.map { preferences ->
+        val username = preferences[PreferenceKeys.username] ?: ""
+        val password = preferences[PreferenceKeys.password] ?: ""
+        UserCredentials(username, password)
     }
-
 }

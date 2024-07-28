@@ -91,4 +91,7 @@ dependencies {
     // network libs
     implementation(libs.okhttp) // http client
     implementation(libs.gson) // json to class
+
+    // lottie
+    implementation(libs.lottie)
 }

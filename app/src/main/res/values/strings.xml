@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">reVitalize</string>
+
+<!--    login page strings-->
+    <string name="username">Username Icon</string>
+    <string name="password">Password Icon</string>
 </resources>
