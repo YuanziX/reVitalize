@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import dev.yuanzix.revitalize.data.constants.ApiConstants
 import dev.yuanzix.revitalize.data.models.AllData
 import dev.yuanzix.revitalize.data.models.Attendance
+import dev.yuanzix.revitalize.data.models.CredentialStatus
 import dev.yuanzix.revitalize.data.models.GradeHistory
 import dev.yuanzix.revitalize.data.models.Profile
 import dev.yuanzix.revitalize.data.models.SemesterDetails
@@ -86,6 +87,21 @@ object API {
             )
         } catch (e: Exception) {
             throw e
+        }
+    }
+
+    fun verifyCredentials(username: String, password: String): CredentialStatus {
+        try {
+            val status = NetworkUtils.postStatusCode(
+                ApiConstants.VERIFY_URL, getCredentialsPayload(username, password)
+            )
+            return if (status == 200) {
+                CredentialStatus.Correct
+            } else {
+                CredentialStatus.Incorrect
+            }
+        } catch (e: Exception) {
+            return CredentialStatus.SomethingWentWrong
         }
     }
 }
