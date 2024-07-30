@@ -9,5 +9,5 @@ data class GradeHistory(
     @PrimaryKey val cgpa: String,
     val creditsEarned: String,
     val numOfEachGrade: Map<String, String>,
-    val subjects: Map<String, Subject>
+    val subjects: Map<String, Subject>,
 )

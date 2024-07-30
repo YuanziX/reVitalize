@@ -13,5 +13,5 @@
 .externalNativeBuild
 .cxx
 local.properties
-/app/src/main/java/dev/yuanzix/revitalize/data/constants/PrivateConstants.kt
+app/src/main/java/dev/yuanzix/revitalize/data/constants/PrivateConstants.kt
 /.kotlin/errors/

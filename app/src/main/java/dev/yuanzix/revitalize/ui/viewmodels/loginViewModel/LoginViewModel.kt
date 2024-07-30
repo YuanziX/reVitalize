@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.yuanzix.revitalize.data.api.API
+import dev.yuanzix.revitalize.data.api.Api
 import dev.yuanzix.revitalize.data.models.CredentialStatus
 import dev.yuanzix.revitalize.data.repository.DataStoreRepository
 import kotlinx.coroutines.Dispatchers
@@ -15,12 +15,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val api: API,
-    private val dataStoreRepository: DataStoreRepository
+    private val api: Api,
+    val dataStoreRepository: DataStoreRepository,
 ) : ViewModel() {
     var username by mutableStateOf("")
     var password by mutableStateOf("")
     var loginState by mutableStateOf(LoginStates.Login)
+    var credentials by mutableStateOf(dataStoreRepository.readUsernameAndPassword)
 
     private fun validateInputs(): Boolean {
         return if (username.isBlank() || password.isBlank()) {
@@ -51,6 +52,7 @@ class LoginViewModel @Inject constructor(
                     dataStoreRepository.persistUsernameAndPassword(username, password)
                     loginState = LoginStates.Success
                 }
+
                 CredentialStatus.Incorrect -> loginState = LoginStates.CredentialsIncorrect
                 CredentialStatus.SomethingWentWrong -> loginState = LoginStates.SomethingWentWrong
             }

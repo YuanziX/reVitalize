@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "dev.yuanzix.revitalize"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -80,6 +80,7 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
     ksp(libs.hilt.compiler)
+    implementation(libs.hilt.navigation)
 
     // datastore
     implementation(libs.datastore.preferences)

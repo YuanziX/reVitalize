@@ -7,8 +7,14 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import dev.yuanzix.revitalize.data.api.API
+import dev.yuanzix.revitalize.data.api.Api
+import dev.yuanzix.revitalize.data.database.AttendanceDao
+import dev.yuanzix.revitalize.data.database.GradeHistoryDao
+import dev.yuanzix.revitalize.data.database.ProfileDao
 import dev.yuanzix.revitalize.data.database.ReVitalizeDatabase
+import dev.yuanzix.revitalize.data.database.SemesterDao
+import dev.yuanzix.revitalize.data.database.TimeTableDao
+import dev.yuanzix.revitalize.data.repository.DataRepository
 import dev.yuanzix.revitalize.data.repository.DataStoreRepository
 import javax.inject.Singleton
 
@@ -17,7 +23,7 @@ import javax.inject.Singleton
 object AppModule {
     @Provides
     @Singleton
-    fun provideAPI(): API = API
+    fun provideAPI(): Api = Api
 
     @Provides
     @Singleton
@@ -51,4 +57,20 @@ object AppModule {
     @Provides
     @Singleton
     fun provideTimeTableDao(database: ReVitalizeDatabase) = database.getTimeTableDao()
+
+    @Provides
+    @Singleton
+    fun provideDataRepository(
+        timeTableDao: TimeTableDao,
+        attendanceDao: AttendanceDao,
+        gradeHistoryDao: GradeHistoryDao,
+        profileDao: ProfileDao,
+        semesterDao: SemesterDao,
+    ) = DataRepository(
+        timeTableDao,
+        attendanceDao,
+        gradeHistoryDao,
+        profileDao,
+        semesterDao,
+    )
 }

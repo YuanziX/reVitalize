@@ -13,5 +13,5 @@ data class AttendanceItem(
     val courseType: String,
     val name: String,
     val slot: String,
-    val totalClasses: String
+    val totalClasses: String,
 )

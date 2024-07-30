@@ -12,14 +12,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import dev.yuanzix.revitalize.data.repository.DataStoreRepository
 import dev.yuanzix.revitalize.navigation.BaseScreenState
-import dev.yuanzix.revitalize.ui.screens.main.MainScreen
 import dev.yuanzix.revitalize.ui.screens.loading.LoadingScreen
+import dev.yuanzix.revitalize.ui.screens.main.MainScreen
 import dev.yuanzix.revitalize.ui.theme.ReVitalizeTheme
+import dev.yuanzix.revitalize.ui.viewmodels.loginViewModel.LoginViewModel
+import dev.yuanzix.revitalize.ui.viewmodels.mainViewModel.MainViewModel
+import dev.yuanzix.revitalize.util.checkDateAndTriggerFunction
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -34,9 +35,8 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MyApp() {
-    val context = LocalContext.current
-    val dataStoreRepository = remember { DataStoreRepository(context) }
-    val credentialsFlow by remember { mutableStateOf(dataStoreRepository.readUsernameAndPassword) }
+    val loginViewModel: LoginViewModel = hiltViewModel()
+    val mainViewModel: MainViewModel = hiltViewModel()
     var screenState by remember { mutableStateOf(BaseScreenState.Loading) }
 
     ReVitalizeTheme {
@@ -47,20 +47,30 @@ fun MyApp() {
                 }
 
                 BaseScreenState.Login -> {
-                    LoginScreen(loginViewModel = viewModel(), onLogin = {
-                        screenState = BaseScreenState.Home
-                    })
+                    LoginScreen(
+                        onLogin = {
+                            screenState = BaseScreenState.Home
+                        }, loginViewModel = loginViewModel
+                    )
                 }
 
                 BaseScreenState.Home -> {
-                    MainScreen()
+                    if (mainViewModel.credentialsLoaded.value) {
+                        checkDateAndTriggerFunction(
+                            loginViewModel.dataStoreRepository
+                        ) { mainViewModel.updateAllData() }
+                    }
+                    MainScreen(
+                        mainViewModel = mainViewModel
+                    )
                 }
             }
         }
 
-        LaunchedEffect(key1 = credentialsFlow) {
-            credentialsFlow.collect { userCredentials ->
-                screenState = if (userCredentials.username.isEmpty()) BaseScreenState.Login else BaseScreenState.Home
+        LaunchedEffect(key1 = loginViewModel.credentials) {
+            loginViewModel.credentials.collect { userCredentials ->
+                screenState =
+                    if (userCredentials.username.isEmpty()) BaseScreenState.Login else BaseScreenState.Home
             }
         }
     }

@@ -2,6 +2,11 @@
     <string name="app_name">reVitalize</string>
 
 <!--    login page strings-->
-    <string name="username">Username Icon</string>
+    <string name="username">Registration ID Icon</string>
     <string name="password">Password Icon</string>
+    <string name="show_password">Show Password</string>
+    <string name="hide_password">Hide Password</string>
+
+<!--    home page strings -->
+    <string name="time">Time for class</string>
 </resources>

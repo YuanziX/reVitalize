@@ -20,6 +20,6 @@ abstract class ReVitalizeDatabase : RoomDatabase() {
     abstract fun getAttendanceDao(): AttendanceDao
     abstract fun getGradeHistoryDao(): GradeHistoryDao
     abstract fun getProfileDao(): ProfileDao
-    abstract fun getSemesterDetailsDao(): SemesterDetailsDao
+    abstract fun getSemesterDetailsDao(): SemesterDao
     abstract fun getTimeTableDao(): TimeTableDao
 }

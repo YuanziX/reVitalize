@@ -13,7 +13,7 @@ import dev.yuanzix.revitalize.data.models.Semester
 import dev.yuanzix.revitalize.data.models.TimetableDay
 import dev.yuanzix.revitalize.network.NetworkUtils
 
-object API {
+object Api {
     private val gson = Gson()
     private fun getCredentialsPayload(username: String, password: String) =
         mapOf("username" to username, "password" to password)

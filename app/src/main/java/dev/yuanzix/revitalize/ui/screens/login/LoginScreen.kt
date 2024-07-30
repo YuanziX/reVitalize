@@ -12,32 +12,41 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import dev.yuanzix.revitalize.R
 import dev.yuanzix.revitalize.ui.viewmodels.loginViewModel.LoginStates
 import dev.yuanzix.revitalize.ui.viewmodels.loginViewModel.LoginViewModel
 
 @Composable
 fun LoginScreen(
-    loginViewModel: LoginViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+    loginViewModel: LoginViewModel = hiltViewModel(),
     onLogin: () -> Unit,
 ) {
     val showDialog = remember { mutableStateOf(false) }
     val dialogTitle = remember { mutableStateOf("") }
     val dialogMessage = remember { mutableStateOf("") }
     val loginState = loginViewModel.loginState
+    var showPasswordVisualTransformation by remember { mutableStateOf(true) }
 
     if (showDialog.value) {
         Dialog(
@@ -104,17 +113,50 @@ fun LoginScreen(
                 onValueChange = { loginViewModel.username = it.uppercase() },
                 label = { Text("Username") },
                 singleLine = true,
-                modifier = Modifier.fillMaxWidth(0.95f)
+                modifier = Modifier.fillMaxWidth(0.95f),
+                leadingIcon = {
+                    Icon(
+                        modifier = Modifier.size(20.dp),
+                        painter = painterResource(id = R.drawable.user),
+                        contentDescription = stringResource(id = R.string.username)
+                    )
+                }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            OutlinedTextField(value = loginViewModel.password,
+            OutlinedTextField(
+                value = loginViewModel.password,
                 onValueChange = { loginViewModel.password = it },
                 label = { Text("Password") },
                 singleLine = true,
-                visualTransformation = PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxWidth(0.95f)
+                visualTransformation = if (showPasswordVisualTransformation) PasswordVisualTransformation() else VisualTransformation.None,
+                modifier = Modifier.fillMaxWidth(0.95f),
+                leadingIcon = {
+                    Icon(
+                        modifier = Modifier.size(20.dp),
+                        painter = painterResource(id = R.drawable.password),
+                        contentDescription = stringResource(id = R.string.password)
+                    )
+                },
+                trailingIcon = {
+                    FloatingActionButton(
+                        onClick = {
+                            showPasswordVisualTransformation = !showPasswordVisualTransformation
+                        },
+                        modifier = Modifier.size(25.dp)
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(20.dp),
+                            painter = painterResource(if (showPasswordVisualTransformation) R.drawable.show_password else R.drawable.hide_password),
+                            contentDescription = if (showPasswordVisualTransformation) stringResource(
+                                id = R.string.show_password
+                            ) else stringResource(
+                                id = R.string.hide_password
+                            )
+                        )
+                    }
+                }
             )
 
             Spacer(modifier = Modifier.height(32.dp))

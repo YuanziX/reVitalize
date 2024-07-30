@@ -27,6 +27,9 @@ interface AttendanceDao {
 
     @Query("SELECT (SELECT COUNT(*) FROM $ATTENDANCE_TABLE) == 0")
     suspend fun isEmpty(): Boolean
+
+    @Query("SELECT * FROM $ATTENDANCE_TABLE WHERE classID = :classID")
+    fun getAttendanceItem(classID: String): Flow<AttendanceItem>
 }
 
 @Dao
@@ -35,7 +38,7 @@ interface TimeTableDao {
     suspend fun delete()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(timetableDay: TimetableDay)
+    suspend fun insertAll(timetableDays: List<TimetableDay>)
 
     @Query("SELECT * FROM $TIMETABLE_TABLE")
     suspend fun getAll(): TimetableDay
@@ -48,7 +51,7 @@ interface TimeTableDao {
 }
 
 @Dao
-interface SemesterDetailsDao {
+interface SemesterDao {
     @Query("DELETE FROM $SEMESTER_ID_TABLE")
     suspend fun delete()
 
